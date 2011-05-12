@@ -33,8 +33,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(top_srcdir)/configure AUTHORS NEWS \
-	depcomp install-sh missing
+	$(srcdir)/Makefile.in $(top_srcdir)/configure AUTHORS COPYING \
+	INSTALL NEWS depcomp install-sh missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -650,18 +650,10 @@ uninstall-am:
 	pdf-am ps ps-am tags tags-recursive uninstall uninstall-am
 
 dist-hook:
-	@if test -d "$(srcdir)/.git"; \
-	then \
-		echo Creating ChangeLog && \
-			( cd "$(top_srcdir)" && \
-			 echo '# Generated from git history.'; echo; \
-			  $(top_srcdir)/missing --run git log --stat ) > ChangeLog.tmp \
-			&& mv -f ChangeLog.tmp $(distdir)/ChangeLog \
-			|| ( rm -f ChangeLog.tmp ; \
-			     echo Failed to generate ChangeLog >&2 ); \
-	else \
-		echo A git history is required to generate a ChangeLog >&2; \
-	fi
+	@echo Creating ChangeLog && \
+		( cd "$(top_srcdir)" && ./missing --run git log --date=short --format="%ad  %an  <%ae>%n%x09* %s%n" ) > ChangeLog.tmp \
+		&& mv -f ChangeLog.tmp $(distdir)/ChangeLog \
+		|| ( rm -f ChangeLog.tmp ; echo Failed to generate ChangeLog >&2 );
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
