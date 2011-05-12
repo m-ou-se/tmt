@@ -1,0 +1,7 @@
+/tmt-*.tar.gz
+/src/tmt
+*.o
+.deps
+Makefile
+/config.log
+/config.status
