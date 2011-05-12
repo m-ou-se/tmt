@@ -1,0 +1,7 @@
+Turing Machine Tool is a tool for creating and debugging turing machines.
+
+It is written by Mara Bos <m-ou.se@m-ou.se> and Maarten de Vries <maarten@de-vri.es>.
+
+See file `COPYING' for copying conditions.
+See file `INSTALL' for compilation and installation instructions.
+See file `AUTHORS' for the names of maintainers.
