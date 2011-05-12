@@ -152,7 +152,10 @@ int main(int argc, char * * argv) {
 		string cmd;
 		input >> cmd;
 		
-		if (cmd == "reset") {
+		if (cmd == "version") {
+			cout << PACKAGE_STRING << endl;
+			
+		} else if (cmd == "reset") {
 			tm = TuringMachine();
 			
 		} else if (cmd == "rule") {
