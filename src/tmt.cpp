@@ -181,7 +181,7 @@ int main(int argc, char * * argv) {
 		} else if (cmd == "clearrules") {
 			tm.rules.clear();
 			
-		} else if (cmd == "norule" || cmd == "default" || cmd == "defaultrule") {
+		} else if (cmd == "defaultrule") {
 			string state;
 			if (input >> state) {
 				string new_state, new_tape, move;
@@ -201,14 +201,14 @@ int main(int argc, char * * argv) {
 				cerr << "No state given." << endl;
 			}
 			
-		} else if (cmd == "clearnorules" || cmd == "cleardefaultrules") {
+		} else if (cmd == "cleardefaultrules") {
 			tm.default_rules.clear();
 			
 		} else if (cmd == "clearallrules") {
 			tm.        rules.clear();
 			tm.default_rules.clear();
 			
-		} else if (cmd == "halt" || cmd == "stop") {
+		} else if (cmd == "halt") {
 			string s;
 			if (input >> s) {
 				tm.halt_states.insert(s);
@@ -216,7 +216,7 @@ int main(int argc, char * * argv) {
 				cerr << "No state given." << endl;
 			}
 			
-		} else if (cmd == "nohalt" || cmd == "nostop") {
+		} else if (cmd == "nohalt") {
 			string s;
 			if (input >> s) {
 				tm.halt_states.erase(s);
@@ -224,7 +224,7 @@ int main(int argc, char * * argv) {
 				cerr << "No state given." << endl;
 			}
 			
-		} else if (cmd == "dump" || cmd == "show") {
+		} else if (cmd == "dump") {
 			cout << "state" << '\t' << tm.current.first << endl;
 			cout << "tape" << '\t';
 			for (vector<string>::iterator i = tm.tape_begin.begin(); i != tm.tape_begin.end(); i++) cout << *i << ' ';
@@ -241,7 +241,7 @@ int main(int argc, char * * argv) {
 				     << (i->second.second ? i->second.second < 0 ? "<-" : "->" : "-") << endl;
 			}
 			for (map<string, pair<pair<string, string>, int> >::iterator i = tm.default_rules.begin(); i != tm.default_rules.end(); i++) {
-				cout << "norule"               << '\t'
+				cout << "defaultrule"          << '\t'
 				     << i->first               << '\t'
 				     << i->second.first.first  << '\t'
 				     << i->second.first.second << '\t'
@@ -255,7 +255,7 @@ int main(int argc, char * * argv) {
 		} else if (cmd == "end") {
 			tm.move(tm.tape_end.size());
 			
-		} else if (cmd == "right" || cmd == "m" || cmd == "move") {
+		} else if (cmd == "right" || cmd == "move") {
 			int distance;
 			if (!(input >> distance)) distance = 1;
 			tm.move(distance);
@@ -286,7 +286,7 @@ int main(int argc, char * * argv) {
 				tm.print_tape(cout) << endl;
 			}
 			
-		} else if (cmd == "tapestring" || cmd == "string") {
+		} else if (cmd == "tapestring") {
 			tm.tape_begin.clear();
 			tm.tape_end  .clear();
 			tm.current.second = "-";
@@ -294,14 +294,7 @@ int main(int argc, char * * argv) {
 			while (input >> c) { tm.current.second = c; tm.move(1); }
 			tm.move(-tm.tape_begin.size());
 			
-		} else if (cmd == "tapeline" || cmd == "line") {
-			input.ignore();
-			string l;
-			getline(input, l);
-			for(string::iterator i = l.begin(); i != l.end(); i++) { tm.current.second = *i; tm.move(1); }
-			tm.move(-tm.tape_begin.size());
-			
-		} else if (cmd == "readtape" || cmd == "tapesource" || cmd == "tapeinput") {
+		} else if (cmd == "readtape") {
 			string filename;
 			if (!(input >> filename)) filename = "-";
 			if (istream * f = open_stream(filename)) {
@@ -314,7 +307,7 @@ int main(int argc, char * * argv) {
 				close_stream(f);
 			}
 			
-		} else if (cmd == "readstring" || cmd == "stringsource" || cmd == "stringinput") {
+		} else if (cmd == "readstring") {
 			string filename;
 			if (!(input >> filename)) filename = "-";
 			if (istream * f = open_stream(filename)) {
@@ -328,7 +321,7 @@ int main(int argc, char * * argv) {
 				close_stream(f);
 			}
 			
-		} else if (cmd == "readline" || cmd == "linesource" || cmd == "lineinput") {
+		} else if (cmd == "readline") {
 			string filename;
 			if (!(input >> filename)) filename = "-";
 			if (istream * f = open_stream(filename)) {
@@ -337,7 +330,9 @@ int main(int argc, char * * argv) {
 				tm.current.second = "-";
 				string l;
 				getline(*f, l);
-				for(string::iterator i = l.begin(); i != l.end(); i++) { tm.current.second = *i; tm.move(1); }
+				stringstream ss(l);
+				char c;
+				while (ss >> c) { tm.current.second = c; tm.move(1); }
 				if (f->bad()) cerr << "Unable to read from `" << filename << "'." << endl;
 				tm.move(-tm.tape_begin.size());
 				close_stream(f);
@@ -368,8 +363,8 @@ int main(int argc, char * * argv) {
 			if (!(input >> s)) s = "-";
 			tm.tape_begin.push_back(s);
 			
-		} else if (cmd == "step" || cmd == "s" || cmd == "tracestep" || cmd == "steptrace" || cmd == "tstep" || cmd == "ts") {
-			bool trace = cmd == "tracestep" || cmd == "steptrace" || cmd == "tstep" || cmd == "ts";
+		} else if (cmd == "step" || cmd == "s" || cmd == "steptrace" || cmd == "ts") {
+			bool trace = cmd == "steptrace" || cmd == "ts";
 			unsigned int steps;
 			if (!(input >> steps)) steps = 1;
 			while (steps--) {
@@ -381,8 +376,8 @@ int main(int argc, char * * argv) {
 				if (trace) { cout << tm.current.first << ": "; tm.print_tape(cout) << endl; }
 			}
 			
-		} else if (cmd == "run" || cmd == "trace" || cmd == "runtrace" || cmd == "tracerun") {
-			bool trace = cmd == "trace" || cmd == "runtrace" || cmd == "tracerun";
+		} else if (cmd == "run" || cmd == "trace" || cmd == "runtrace") {
+			bool trace = cmd == "trace" || cmd == "runtrace";
 			cerr << "Running . . . "; cerr.flush();
 			if (trace) cerr << endl;
 			interrupted = 0;
@@ -392,7 +387,7 @@ int main(int argc, char * * argv) {
 			else cerr << "Error." << endl << "No rule for the current situation." << endl;
 			interrupted = 1;
 			
-		} else if (cmd == "source" || cmd == "include" || cmd == "input") {
+		} else if (cmd == "input") {
 			string filename;
 			if (!(input >> filename)) filename = "-";
 			if (istream * f = open_stream(filename)) input_streams.push_front(make_pair(f,filename));
@@ -401,6 +396,9 @@ int main(int argc, char * * argv) {
 			istream * s = input_streams.front().first;
 			if (s != &cin) delete s;
 			input_streams.pop_front();
+			
+		} else if (cmd == "exit") {
+			exit(0);
 			
 		} else if (cmd == "") {
 			

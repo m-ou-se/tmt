@@ -1,0 +1,192 @@
+.TH TMT 1 2011-09-15
+.SH NAME
+tmt \- Turing Machine Tool, a tool for creating and debugging single tape deterministic turing machines.
+.SH SYNOPSIS
+.B tmt
+[
+.B -
+|
+.I file
+|
+.I -command
+] ...
+.SH DESCRIPTION
+\fBtmt\fP simulates a single tape deterministic turing machine.
+It reads and executes commands from the standard input, files, and/or command line arguments.
+You can specify files with commands to run through as command line parameters.
+The special file name '-' (a single dash) represents the standard input.
+Other command line parameters starting with a dash are interpreted as commands themselves.
+.SS COMMANDS
+Unless otherwise noted, the default value for the optional parameters is '-' (a single dash).
+.TP
+\fBversion\fP
+Show the name and version of tmt.
+.TP
+\fBreset\fP
+Reset everything.
+.TP
+\fBstate\fP
+Get the state the machine is in.
+.TP
+\fBstate\fP \fInew-state\fP
+Set the state the machine is in to \fInew-state\fP.
+.TP
+\fBw\fP[\fBrite\fP] [ \fIsymbol\fP ]
+Write \fIsymbol\fP at the tape head.
+.TP
+\fBr\fP[\fBead\fP]
+Read the current symbol at the tape head.
+.TP
+\fBp\fP[\fBut\fP[\fBr\fP]] [ \fIsymbol\fP ]
+Write \fIsymbol\fP at the tape head, and move right.
+.TP
+\fBputl\fP [ \fIsymbol\fP ]
+Write \fIsymbol\fP at the tape head, and move left.
+.TP
+\fBi\fP[\fBnsert\fP[\fBl\fP]] [ \fIsymbol\fP ]
+Insert \fIsymbol\fP on the left of the tape head.
+.TP
+\fBinsertr\fP [ \fIsymbol\fP ]
+Insert \fIsymbol\fP on the right of the tape head.
+.TP
+\fBbegin\fP
+Move the tape head to the beginning of the tape.
+.TP
+\fBend\fP
+Move the tape head to the end of the tape.
+.TP
+\fBright\fP [ \fIdistance\fP ]
+Move the tape head \fIdistance\fP to the right. The default value is 1.
+.TP
+\fBleft\fP [ \fIdistance\fP ]
+Move the tape head \fIdistance\fP to the left. The default value is 1.
+.TP
+\fBmove\fP \fIdistance\fP
+Move \fIdistance\fP to the right. (Negative distance allowed.) Actually, this is just an alias for \fBright\fP.
+.TP
+\fBclear\fP
+Clear the tape.
+.TP
+\fBclearr\fP
+Clear the tape on the right side of the tape head.
+.TP
+\fBclearl\fP
+Clear the tape on the left side of the tape head.
+.TP
+\fBrule\fP \fIstate\fP \fItape-symbol\fP \fInew-state\fP [ \fInew-tape-symbol\fP [ \fItape-movement\fP ] ]
+Add or change the rule for when \fItape-symbol\fP is read while in the specified \fIstate\fP.
+The empty tape symbol is '-' (a single dash).
+\fItape movement\fP can be '<-', '-' or '->'. ('L', 'R', 'l', 'r', '--', '0', '>', '<', '<=', and '=>' are valid aliases.)
+.TP
+\fBrule\fP \fIstate\fP \fItape-symbol\fP
+Remove the specified rule.
+.TP
+\fBdefaultrule\fP \fIstate\fP \fInew-state\fP [ \fInew-tape-symbol\fP [ \fItape-movement\fP ] ]
+Add/change the default rule for \fIstate\fP.
+This is what is executed when the machine is in \fIstate\fP, but no rule applies to the current situation.
+Using the special value '-' (a single dash) for \fIstate\fP adds/changes the default rule that applies to all states.
+.TP
+\fBdefaultrule\fP \fInew-state\fP
+A shortcut for \fBdefaultrule - \fP\fInew-state\fP.
+.TP
+\fBclearrules\fP
+Remove all rules.
+.TP
+\fBcleardefaultrules\fP
+Remove all the default rules.
+.TP
+\fBclearallrules\fP
+Remove both the specific and the default rules.
+.TP
+\fBhalt\fP \fIstate\fP
+Let \fIstate\fP be an halt state.
+Execution will stop whenever the machine enters this state.
+.TP
+\fBnohalt\fP \fIstate\fP
+Let \fIstate\fP no longer be an halt state.
+.TP
+\fBtape\fP
+Show the entire tape. Square brackets indicate the position of the tape head.
+.TP
+\fBtape\fP \fIsymbol\fP [ \fIsymbol\fP ... ]
+Replace the tape with the given list of symbols. The tape head will be at the first one.
+.TP
+\fBtapestring\fP \fIstring\fP
+Same as \fBtape\fP, except that every character is seen as a seperate symbol.
+.TP
+\fBreadtape\fP [ \fIfile\fP ]
+Like \fBtape\fP, but read the (whitespace seperated) symbols from the specified file.
+If nothing or '-' (a single dash) is given, the standard input is used.
+The file is read all the way to the end.
+For the standard input that means that it will only stop when the user ends the standard input stream by pressing ctrl-D, after which the standard input is not usable anymore.
+.TP
+\fBreadstring\fP [ \fIfile\fP ]
+Like \fBreadtape\fP, except that every character is seen as a seperate symbol.
+.TP
+\fBreadline\fP [ \fIfile\fP ]
+Like \fBreadstring\fP, except that it only reads one line.
+This makes it possible to use this command multiple times for the standard input.
+.TP
+\fBs\fP[\fBtep\fP] [ \fIn\fP ]
+Execute the next \fIn\fP steps. The default is one step.
+.TP
+\fBsteptrace\fP|\fBst\fP [ \fIn\fP ]
+Like \fBstep\fP, but show what's happening.
+.TP
+\fBrun\fP
+Run the program until the machine enters an halt state.
+The execution can be interrupted by SIGINT (Ctrl-C).
+.TP
+[\fBrun\fP]\fBtrace\fP
+Like \fBrun\fP, but show what's happening.
+.TP
+\fBdump\fP
+Show all the rules and the current state of the machine.
+The output of this command can be used as input to restore the current machine.
+.TP
+\fBinput\fP [ \fIfile\fP ]
+Run the commands in \fIfile\fP. 
+The special name '-' (a single dash, the default value), refers to the standard input.
+.TP
+\fBreturn\fP
+Return from \fBinput\fP.
+.TP
+\fBexit\fP
+Exit the simulator.
+.SH EXAMPLES
+.SS Example turing machine definition
+.nf
+state s
+rule     s 0      d - R
+rule     d 0      d 0 R
+rule     d 1      r x L
+rule     d 2      r y L
+rule     d x      d x R
+rule     d y      d y R
+rule     r x      r x L
+rule     r y      r y L
+rule     r 0      r 0 L
+rule     r -      s - R
+rule     s x    cx2 - R
+rule   cx2 x    cx1 - R
+rule   cx1 x    cy3 - R
+rule   cy3 x    cy3 - R
+rule   cy3 y    cy2 - R
+rule   cy2 y    cy1 - R
+rule   cy1 y    cy0 - R
+rule   cy0 y    cy0 - R
+rule   cy0 - accept - R
+defaultrule reject
+halt reject
+halt accept
+.fi
+.SS Example invocation of \fBtmt\fP
+\fBtmt tm -readline -run -state\fP
+.PP
+Read the turing machine definition from 'tm', read the tape from the standard input, run the machine, and show the name of the halt state.
+.SH AUTHORS
+\fBtmt\fP is written by \fBMara Bos\fP <\fIm-ou.se@m-ou.se\fP> and \fBMaarten de Vries\fP <\fImaarten@de-vri.es\fP>.
+.SH BUGS
+Please report any bugs to Mara: \fBm-ou.se@m-ou.se\fP.
+.SH SOURCE
+\fBtmt\fP can be found on \fBgithub\fP: \fIhttp://github.com/m-ou-se/tmt\fP.
