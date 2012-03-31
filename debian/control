@@ -1,0 +1,14 @@
+Source: tmt
+Section: devel
+Priority: optional
+Maintainer: Mara Bos <m-ou.se@m-ou.se>
+Build-Depends: debhelper (>= 8.0.0), autotools-dev
+Standards-Version: 3.9.2
+Homepage: https://github.com/m-ou-se/tmt
+Vcs-Git: git://github.com/m-ou-se/tmt.git
+
+Package: tmt
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Turing Machine Tool
+ Turing Machine Tool is a tool for creating and debugging turing machines.
